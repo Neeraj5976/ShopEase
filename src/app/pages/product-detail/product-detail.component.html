@@ -1,0 +1,424 @@
+<div class="container py-4" *ngIf="product; else productNotFound">
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a routerLink="/" class="text-decoration-none">Home</a></li>
+      <li class="breadcrumb-item"><a [routerLink]="['/products']" class="text-decoration-none">Products</a></li>
+      <li class="breadcrumb-item"><a [routerLink]="['/products', product.category.toLowerCase()]" class="text-decoration-none">{{ product.category }}</a></li>
+      <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+    </ol>
+  </nav>
+
+  <div class="row">
+    <!-- Product Images -->
+    <div class="col-lg-6 mb-4">
+      <div class="product-images">
+        <div class="main-image mb-3">
+          <img [src]="product.imageUrl" [alt]="product.name" class="img-fluid rounded shadow">
+          <div class="position-absolute top-0 end-0 m-3" *ngIf="product.originalPrice">
+            <span class="badge bg-danger fs-6">
+              Save ${{ product.originalPrice - product.price }}
+            </span>
+          </div>
+        </div>
+        
+        <!-- Thumbnail images (mock - same image repeated) -->
+        <div class="d-flex gap-2">
+          <img [src]="product.imageUrl" [alt]="product.name" 
+               class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;">
+          <img [src]="product.imageUrl" [alt]="product.name" 
+               class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;">
+          <img [src]="product.imageUrl" [alt]="product.name" 
+               class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;">
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Details -->
+    <div class="col-lg-6">
+      <div class="product-details">
+        <h1 class="h2 fw-bold mb-3">{{ product.name }}</h1>
+        
+        <!-- Rating and Reviews -->
+        <div class="d-flex align-items-center mb-3">
+          <div class="text-warning me-2">
+            <i class="fas fa-star" *ngFor="let star of getStars(product.rating)"></i>
+            <i class="far fa-star" *ngFor="let star of getEmptyStars(product.rating)"></i>
+          </div>
+          <span class="me-2">{{ product.rating }}</span>
+          <a href="#reviews" class="text-decoration-none">({{ product.reviewsCount }} reviews)</a>
+        </div>
+
+        <!-- Price -->
+        <div class="price-section mb-4">
+          <div class="d-flex align-items-baseline mb-2">
+            <span class="h3 text-primary me-3">${{ product.price }}</span>
+            <span class="text-muted text-decoration-line-through h5" *ngIf="product.originalPrice">
+              ${{ product.originalPrice }}
+            </span>
+            <span class="badge bg-success ms-2" *ngIf="product.originalPrice">
+              {{ getDiscountPercentage() }}% OFF
+            </span>
+          </div>
+          <p class="text-success" *ngIf="product.inStock">
+            <i class="fas fa-check-circle me-1"></i>In Stock
+          </p>
+          <p class="text-danger" *ngIf="!product.inStock">
+            <i class="fas fa-times-circle me-1"></i>Out of Stock
+          </p>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-4">
+          <h5>Description</h5>
+          <p class="text-muted">{{ product.description }}</p>
+        </div>
+
+        <!-- Features -->
+        <div class="mb-4" *ngIf="product.features && product.features.length > 0">
+          <h5>Key Features</h5>
+          <ul class="list-unstyled">
+            <li *ngFor="let feature of product.features" class="mb-2">
+              <i class="fas fa-check text-success me-2"></i>{{ feature }}
+            </li>
+          </ul>
+        </div>
+
+        <!-- Quantity and Add to Cart -->
+        <div class="mb-4">
+          <div class="row align-items-center">
+            <div class="col-md-3 mb-2">
+              <label for="quantity" class="form-label">Quantity:</label>
+              <div class="input-group">
+                <button class="btn btn-outline-secondary" type="button" 
+                        (click)="decreaseQuantity()" [disabled]="quantity <= 1">
+                  <i class="fas fa-minus"></i>
+                </button>
+                <input type="number" class="form-control text-center" id="quantity" 
+                       [(ngModel)]="quantity" min="1" max="10">
+                <button class="btn btn-outline-secondary" type="button" 
+                        (click)="increaseQuantity()" [disabled]="quantity >= 10">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+            </div>
+            <div class="col-md-9">
+              <div class="d-flex gap-2">
+                <button class="btn btn-primary btn-lg flex-grow-1" 
+                        (click)="addToCart()" 
+                        [disabled]="!product.inStock">
+                  <i class="fas fa-cart-plus me-2"></i>
+                  Add to Cart
+                </button>
+                <button class="btn btn-outline-danger btn-lg" 
+                        (click)="addToWishlist()">
+                  <i class="fas fa-heart"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Additional Info -->
+        <div class="additional-info">
+          <div class="row text-center">
+            <div class="col-4">
+              <i class="fas fa-shipping-fast fa-2x text-primary mb-2"></i>
+              <p class="small mb-0">Free Shipping</p>
+              <p class="small text-muted">On orders over $50</p>
+            </div>
+            <div class="col-4">
+              <i class="fas fa-undo fa-2x text-primary mb-2"></i>
+              <p class="small mb-0">Easy Returns</p>
+              <p class="small text-muted">30-day return policy</p>
+            </div>
+            <div class="col-4">
+              <i class="fas fa-shield-alt fa-2x text-primary mb-2"></i>
+              <p class="small mb-0">Warranty</p>
+              <p class="small text-muted">1-year warranty</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Product Tabs -->
+  <div class="row mt-5">
+    <div class="col-12">
+      <ul class="nav nav-tabs" id="productTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" 
+                  type="button" role="tab">Details</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="specifications-tab" data-bs-toggle="tab" data-bs-target="#specifications" 
+                  type="button" role="tab">Specifications</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" 
+                  type="button" role="tab">Reviews ({{ product.reviewsCount }})</button>
+        </li>
+      </ul>
+      
+      <div class="tab-content mt-3" id="productTabsContent">
+        <!-- Details Tab -->
+        <div class="tab-pane fade show active" id="details" role="tabpanel">
+          <div class="p-4">
+            <h5>Product Details</h5>
+            <p>{{ product.description }}</p>
+            <div *ngIf="product.features && product.features.length > 0">
+              <h6>Features:</h6>
+              <ul>
+                <li *ngFor="let feature of product.features">{{ feature }}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Specifications Tab -->
+        <div class="tab-pane fade" id="specifications" role="tabpanel">
+          <div class="p-4">
+            <h5>Specifications</h5>
+            <table class="table table-striped">
+              <tbody>
+                <tr>
+                  <td><strong>Category</strong></td>
+                  <td>{{ product.category }}</td>
+                </tr>
+                <tr>
+                  <td><strong>Brand</strong></td>
+                  <td>Premium Brand</td>
+                </tr>
+                <tr>
+                  <td><strong>Model</strong></td>
+                  <td>{{ product.name }}</td>
+                </tr>
+                <tr>
+                  <td><strong>Availability</strong></td>
+                  <td>{{ product.inStock ? 'In Stock' : 'Out of Stock' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <!-- Reviews Tab -->
+        <div class="tab-pane fade" id="reviews" role="tabpanel">
+          <div class="p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h5>Customer Reviews ({{ reviewCount }})</h5>
+              
+              <!-- Write Review Button -->
+              <div *ngIf="isLoggedIn && !showReviewForm">
+                <button class="btn btn-primary" (click)="showWriteReviewForm()">
+                  <i class="fas fa-edit me-2"></i>Write a Review
+                </button>
+              </div>
+              
+              <!-- Login prompt -->
+              <div *ngIf="!isLoggedIn">
+                <a routerLink="/login" class="btn btn-outline-primary">
+                  <i class="fas fa-sign-in-alt me-2"></i>Login to Review
+                </a>
+              </div>
+            </div>
+
+            <!-- Review Form -->
+            <div *ngIf="showReviewForm" class="card mb-4">
+              <div class="card-header">
+                <h6 class="mb-0">
+                  <i class="fas fa-edit me-2"></i>
+                  {{ isEditingReview ? 'Edit Your Review' : 'Write a Review' }}
+                </h6>
+              </div>
+              <div class="card-body">
+                <form [formGroup]="reviewForm" (ngSubmit)="submitReview()">
+                  <!-- Rating -->
+                  <div class="mb-3">
+                    <label class="form-label">Rating *</label>
+                    <div class="d-flex align-items-center">
+                      <div class="rating-input me-3">
+                        <div class="btn-group" role="group">
+                          <input type="radio" class="btn-check" name="rating" id="rating1" value="1" formControlName="rating">
+                          <label class="btn btn-outline-warning" for="rating1">1★</label>
+                          
+                          <input type="radio" class="btn-check" name="rating" id="rating2" value="2" formControlName="rating">
+                          <label class="btn btn-outline-warning" for="rating2">2★</label>
+                          
+                          <input type="radio" class="btn-check" name="rating" id="rating3" value="3" formControlName="rating">
+                          <label class="btn btn-outline-warning" for="rating3">3★</label>
+                          
+                          <input type="radio" class="btn-check" name="rating" id="rating4" value="4" formControlName="rating">
+                          <label class="btn btn-outline-warning" for="rating4">4★</label>
+                          
+                          <input type="radio" class="btn-check" name="rating" id="rating5" value="5" formControlName="rating">
+                          <label class="btn btn-outline-warning" for="rating5">5★</label>
+                        </div>
+                      </div>
+                      <span class="text-muted">{{ reviewForm.get('rating')?.value }}/5 stars</span>
+                    </div>
+                  </div>
+
+                  <!-- Title -->
+                  <div class="mb-3">
+                    <label for="reviewTitle" class="form-label">Review Title *</label>
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      id="reviewTitle" 
+                      formControlName="title"
+                      placeholder="Summarize your experience"
+                      [class.is-invalid]="reviewForm.get('title')?.invalid && reviewForm.get('title')?.touched">
+                    <div class="invalid-feedback" *ngIf="reviewForm.get('title')?.invalid && reviewForm.get('title')?.touched">
+                      <div *ngIf="reviewForm.get('title')?.errors?.['required']">Title is required</div>
+                      <div *ngIf="reviewForm.get('title')?.errors?.['minlength']">Title must be at least 5 characters</div>
+                      <div *ngIf="reviewForm.get('title')?.errors?.['maxlength']">Title must be less than 100 characters</div>
+                    </div>
+                  </div>
+
+                  <!-- Comment -->
+                  <div class="mb-3">
+                    <label for="reviewComment" class="form-label">Review *</label>
+                    <textarea 
+                      class="form-control" 
+                      id="reviewComment" 
+                      rows="4" 
+                      formControlName="comment"
+                      placeholder="Share your thoughts about this product..."
+                      [class.is-invalid]="reviewForm.get('comment')?.invalid && reviewForm.get('comment')?.touched"></textarea>
+                    <div class="invalid-feedback" *ngIf="reviewForm.get('comment')?.invalid && reviewForm.get('comment')?.touched">
+                      <div *ngIf="reviewForm.get('comment')?.errors?.['required']">Review comment is required</div>
+                      <div *ngIf="reviewForm.get('comment')?.errors?.['minlength']">Review must be at least 10 characters</div>
+                      <div *ngIf="reviewForm.get('comment')?.errors?.['maxlength']">Review must be less than 1000 characters</div>
+                    </div>
+                    <div class="form-text">{{ reviewForm.get('comment')?.value?.length || 0 }}/1000 characters</div>
+                  </div>
+
+                  <!-- Form Actions -->
+                  <div class="d-flex gap-2">
+                    <button 
+                      type="submit" 
+                      class="btn btn-primary"
+                      [disabled]="reviewForm.invalid || isSubmittingReview">
+                      <span *ngIf="isSubmittingReview" class="spinner-border spinner-border-sm me-2"></span>
+                      <i *ngIf="!isSubmittingReview" class="fas fa-save me-2"></i>
+                      {{ isSubmittingReview ? 'Saving...' : (isEditingReview ? 'Update Review' : 'Submit Review') }}
+                    </button>
+                    <button type="button" class="btn btn-secondary" (click)="cancelReview()">
+                      <i class="fas fa-times me-2"></i>Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+            <!-- User's Reviews (if exists and not editing) -->
+            <div *ngIf="userReviews.length > 0 && !showReviewForm" class="mb-4">
+              <h6 class="text-primary mb-3"><i class="fas fa-user me-2"></i>Your Reviews ({{ userReviews.length }})</h6>
+              <div *ngFor="let userReview of userReviews" class="card mb-3 border-primary">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                  <h6 class="mb-0">Your Review</h6>
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-light btn-sm" (click)="editReview(userReview)">
+                      <i class="fas fa-edit me-1"></i>Edit
+                    </button>
+                    <button class="btn btn-danger btn-sm" (click)="deleteReview(userReview)">
+                      <i class="fas fa-trash me-1"></i>Delete
+                    </button>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-2">
+                    <div>
+                      <strong>{{ userReview.userName }}</strong>
+                      <span class="badge bg-success ms-2">Verified Purchase</span>
+                      <div class="text-warning mt-1">
+                        <i class="fas fa-star" *ngFor="let star of getRatingStars(userReview.rating)"></i>
+                        <i class="far fa-star" *ngFor="let star of getEmptyRatingStars(userReview.rating)"></i>
+                      </div>
+                    </div>
+                    <small class="text-muted">{{ getReviewDate(userReview.date) }}</small>
+                  </div>
+                  <h6 class="fw-bold">{{ userReview.title }}</h6>
+                  <p class="mb-0">{{ userReview.comment }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Other Users' Reviews -->
+            <div *ngIf="otherReviews.length > 0">
+              <h6 class="text-secondary mb-3" *ngIf="userReviews.length > 0">
+                <i class="fas fa-users me-2"></i>Other Customer Reviews ({{ otherReviews.length }})
+              </h6>
+              <h6 class="text-secondary mb-3" *ngIf="userReviews.length === 0">
+                <i class="fas fa-users me-2"></i>Customer Reviews ({{ otherReviews.length }})
+              </h6>
+              <div class="review-item border-bottom pb-3 mb-3" *ngFor="let review of otherReviews">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <div>
+                    <strong>{{ review.userName }}</strong>
+                    <span class="badge bg-success ms-2" *ngIf="review.verified">Verified Purchase</span>
+                    <div class="text-warning mt-1">
+                      <i class="fas fa-star" *ngFor="let star of getRatingStars(review.rating)"></i>
+                      <i class="far fa-star" *ngFor="let star of getEmptyRatingStars(review.rating)"></i>
+                    </div>
+                  </div>
+                  <small class="text-muted">{{ getReviewDate(review.date) }}</small>
+                </div>
+                <h6 class="fw-bold">{{ review.title }}</h6>
+                <p class="mb-0">{{ review.comment }}</p>
+              </div>
+            </div>
+
+            <!-- No Reviews -->
+            <div *ngIf="userReviews.length === 0 && otherReviews.length === 0" class="text-center py-4">
+              <i class="fas fa-star fa-3x text-muted mb-3"></i>
+              <h5>No reviews yet</h5>
+              <p class="text-muted">Be the first to review this product!</p>
+              <button *ngIf="isLoggedIn" class="btn btn-primary" (click)="showWriteReviewForm()">
+                <i class="fas fa-edit me-2"></i>Write the First Review
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Related Products -->
+  <div class="row mt-5">
+    <div class="col-12">
+      <h4 class="mb-4">Related Products</h4>
+      <div class="row g-4">
+        <div class="col-lg-3 col-md-6" *ngFor="let relatedProduct of relatedProducts">
+          <div class="card h-100 border-0 shadow-sm product-card">
+            <img [src]="relatedProduct.imageUrl" class="card-img-top" [alt]="relatedProduct.name" 
+                 style="height: 200px; object-fit: cover;" (click)="viewProduct(relatedProduct.id)">
+            <div class="card-body">
+              <h6 class="card-title">{{ relatedProduct.name }}</h6>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="h6 text-primary">${{ relatedProduct.price }}</span>
+                <button class="btn btn-outline-primary btn-sm" (click)="viewProduct(relatedProduct.id)">
+                  View
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Product Not Found -->
+<ng-template #productNotFound>
+  <div class="container py-5">
+    <div class="text-center">
+      <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+      <h3>Product Not Found</h3>
+      <p class="text-muted">The product you're looking for doesn't exist or has been removed.</p>
+      <a routerLink="/products" class="btn btn-primary">Browse Products</a>
+    </div>
+  </div>
+</ng-template>

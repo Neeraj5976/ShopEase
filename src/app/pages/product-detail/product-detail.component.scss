@@ -1,0 +1,57 @@
+.review-item {
+  padding: 1rem 0;
+}
+
+.rating-input .btn-group {
+  gap: 2px;
+}
+
+.rating-input .btn-outline-warning {
+  border-color: #ffc107;
+  color: #ffc107;
+}
+
+.rating-input .btn-outline-warning:hover,
+.rating-input .btn-outline-warning.active,
+.rating-input .btn-check:checked + .btn-outline-warning {
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: #000;
+}
+
+.review-form {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.user-review-card {
+  border-left: 4px solid #007bff;
+}
+
+.verified-badge {
+  font-size: 0.75rem;
+}
+
+.review-actions {
+  gap: 0.5rem;
+}
+
+.star-rating {
+  color: #ffc107;
+}
+
+.empty-star {
+  color: #e9ecef;
+}
+
+@media (max-width: 768px) {
+  .review-actions {
+    flex-direction: column;
+  }
+  
+  .rating-input .btn-group {
+    flex-wrap: wrap;
+  }
+}

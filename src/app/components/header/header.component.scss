@@ -1,0 +1,123 @@
+.cart-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  min-width: 18px;
+  height: 18px;
+  font-size: 11px;
+  line-height: 18px;
+  text-align: center;
+  border-radius: 50%;
+  background-color: #dc3545;
+  color: white;
+  font-weight: bold;
+}
+
+.nav-link {
+  position: relative;
+}
+
+// Sticky header styles
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1030; // Higher than Bootstrap's default to ensure it stays on top
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transition: all 0.3s ease-in-out;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+// Enhanced sticky behavior with backdrop blur
+.navbar.sticky-top {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background-color: rgba(33, 37, 41, 0.95) !important; // Semi-transparent dark background
+}
+
+// Smooth transitions for navbar elements
+.navbar-brand, .nav-link {
+  transition: all 0.2s ease;
+}
+
+.navbar-brand:hover, .nav-link:hover {
+  transform: translateY(-1px);
+}
+
+// Enhanced dropdown styling for sticky header
+.dropdown-menu {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border: none;
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+// Search bar enhancements
+.form-control {
+  transition: all 0.2s ease;
+  border-radius: 20px;
+}
+
+.form-control:focus {
+  box-shadow: 0 0 0 0.2rem rgba(255, 153, 0, 0.25);
+  border-color: #ff9900;
+}
+
+.cart-counter {
+  position: absolute;
+  top: -8px;
+  right: 10px;
+  background-color: #dc3545;
+  color: white;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: bold;
+  min-width: 22px;
+  border: 2px solid white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  z-index: 10;
+}
+
+// Mobile responsive styles
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0.5rem 0;
+  }
+  
+  .navbar-brand {
+    font-size: 1.1rem;
+  }
+  
+  .form-control {
+    font-size: 14px;
+  }
+  
+  .cart-counter {
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+    top: -6px;
+    right: 8px;
+  }
+  
+  // Ensure dropdown doesn't get cut off on mobile
+  .dropdown-menu {
+    position: fixed !important;
+    top: auto !important;
+    left: 10px !important;
+    right: 10px !important;
+    width: auto !important;
+    margin-top: 60px;
+  }
+}
+
+// Tablet responsive styles
+@media (max-width: 992px) and (min-width: 769px) {
+  .navbar {
+    padding: 0.75rem 0;
+  }
+}
