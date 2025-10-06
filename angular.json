@@ -97,6 +97,15 @@
             ],
             "scripts": []
           }
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy",
+          "options": {
+            "baseHref": "https://neeraj5976.github.io/ShopEase/",
+            "name": "ShopEase",
+            "email": "neeraj5976@github.com",
+            "dir": "dist/amazon-shopping-app"
+          }
         }
       }
     }
